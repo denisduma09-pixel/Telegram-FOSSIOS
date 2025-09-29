@@ -1,9 +1,9 @@
-name: 🚀 KOTUKTOPER BUILD
+name: 🚀 KOTUKTOPER iOS26 BUILD
 on: workflow_dispatch
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 25
+    timeout-minutes: 30
     
     steps:
     - uses: actions/checkout@v4
@@ -14,19 +14,14 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
     
-    - name: Create API_KEYS file
-      run: |
-        echo "appId=123456" > API_KEYS
-        echo "appHash=abcdef1234567890" >> API_KEYS
-    
     - name: Make gradlew executable
       run: chmod +x gradlew
     
-    - name: Build with Gradle
+    - name: Build iOS26 Edition
       run: |
         ./gradlew assembleDebug --no-daemon --stacktrace
     
     - uses: actions/upload-artifact@v4
       with:
-        name: KotuktoperGram
+        name: KotuktoperGram-iOS26
         path: "**/build/outputs/apk/**/*.apk"
