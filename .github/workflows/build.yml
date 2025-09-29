@@ -1,4 +1,4 @@
-name: 🚀 RADICAL FIX
+name: 🚀 FIX DEPENDENCIES
 on: workflow_dispatch
 
 jobs:
@@ -14,42 +14,61 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
     
-    - name: Replace build files
+    - name: Fix build files with repositories
       run: |
-        echo "=== REPLACING BUILD FILES ==="
+        echo "=== FIXING BUILD FILES WITH REPOSITORIES ==="
         
-        # Создаем простой build.gradle для TMessagesProj_App
-        echo 'plugins { id "com.android.application" }' > TMessagesProj_App/build.gradle
-        echo 'android {' >> TMessagesProj_App/build.gradle
-        echo 'compileSdkVersion 33' >> TMessagesProj_App/build.gradle
-        echo 'buildToolsVersion "33.0.0"' >> TMessagesProj_App/build.gradle
-        echo 'defaultConfig {' >> TMessagesProj_App/build.gradle
-        echo 'applicationId "org.kotuktoper.ios26"' >> TMessagesProj_App/build.gradle
-        echo 'minSdkVersion 21' >> TMessagesProj_App/build.gradle
-        echo 'targetSdkVersion 33' >> TMessagesProj_App/build.gradle
-        echo 'versionCode 26001' >> TMessagesProj_App/build.gradle
-        echo 'versionName "iOS26.1.0"' >> TMessagesProj_App/build.gradle
-        echo '}}' >> TMessagesProj_App/build.gradle
-        
-        # Создаем простой build.gradle для основного проекта
-        echo 'plugins { id "com.android.application" }' > TMessagesProj/build.gradle
-        echo 'android {' >> TMessagesProj/build.gradle
-        echo 'compileSdkVersion 33' >> TMessagesProj/build.gradle
-        echo 'buildToolsVersion "33.0.0"' >> TMessagesProj/build.gradle
-        echo 'defaultConfig {' >> TMessagesProj/build.gradle
-        echo 'applicationId "org.kotuktoper.ios26"' >> TMessagesProj/build.gradle
-        echo 'minSdkVersion 21' >> TMessagesProj/build.gradle
-        echo 'targetSdkVersion 33' >> TMessagesProj/build.gradle
-        echo 'versionCode 26001' >> TMessagesProj/build.gradle
-        echo 'versionName "iOS26.1.0"' >> TMessagesProj/build.gradle
-        echo '}}' >> TMessagesProj/build.gradle
-        
-        echo "✅ Build files replaced"
+        # Создаем build.gradle с репозиториями
+        cat > TMessagesProj/build.gradle << 'EOF'
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.0.3'
+    }
+}
 
-    - name: Create API_KEYS
-      run: |
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    compileSdkVersion 33
+    buildToolsVersion '33.0.0'
+    defaultConfig {
+        applicationId "org.kotuktoper.ios26"
+        minSdkVersion 21
+        targetSdkVersion 33
+        versionCode 26001
+        versionName "iOS26.1.0"
+    }
+    buildTypes {
+        debug {
+            debuggable true
+            minifyEnabled false
+        }
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+}
+EOF
+
+        # Создаем API_KEYS
         echo "appId=123456" > TMessagesProj/API_KEYS
         echo "appHash=abcdef1234567890" >> TMessagesProj/API_KEYS
+
+        echo "✅ Build files with repositories created"
 
     - name: Create gradle.properties
       run: |
