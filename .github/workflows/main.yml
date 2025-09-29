@@ -1,53 +1,82 @@
-name: 🚀 KOTUKTOPER CMAKE FIX
+
+name: 🚀 KOTUKTOPER ULTIMATE BUILD
 on: workflow_dispatch
 jobs:
   build:
     runs-on: ubuntu-latest
     
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Set up JDK 17
+    # 1. CHECKOUT
+    - name: 📥 Checkout code
+      uses: actions/checkout@v4
+
+    # 2. JAVA
+    - name: ☕ Set up JDK 17
       uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
-    
-    - name: Install System CMake
+
+    # 3. ВСЕ ФИКСЫ ОДНОВРЕМЕННО
+    - name: 🛠️ Apply ALL fixes
       run: |
-        echo "=== INSTALLING SYSTEM CMAKE ==="
-        sudo apt-get update
-        sudo apt-get install -y cmake
-        cmake --version
-    
-    - name: Fix build.gradle CMake configuration
-      run: |
-        cd TMessagesProj
-        echo "=== CURRENT CMAKE CONFIG ==="
-        grep -A 10 -B 5 "cmake" build.gradle
+        # ФИКС 1: APP_PACKAGE в TMessagesProj_App
+        cd TMessagesProj_App
+        sed -i 's/applicationId APP_PACKAGE/applicationId "org.kotuktoper.ios26"/g' build.gradle
+        echo "✅ Fixed APP_PACKAGE"
         
-        echo "=== REMOVING CMAKE VERSION ==="
-        # Убираем версию CMake полностью
-        sed -i '/cmake {/,/}/ { /version/d }' build.gradle
+        # ФИКС 2: CMAKE в основном проекте
+        cd ../TMessagesProj
+        sed -i '/externalNativeBuild {/,/}/d' build.gradle
+        sed -i '/sourceSets.main.jniLibs.srcDirs/d' build.gradle
+        echo "✅ Fixed CMake"
         
-        echo "=== SIMPLIFIED CMAKE CONFIG ==="
-        grep -A 5 -B 5 "cmake" build.gradle
-        
-        # Альтернатива: полное удаление CMake блока если нужно
-        # sed -i '/externalNativeBuild {/,/}/d' build.gradle
-    
-    - name: Create gradle.properties
+        # ФИКС 3: gradle.properties для памяти
+        cd ..
+        echo "org.gradle.jvmargs=-Xmx2048m" > gradle.properties
+        echo "✅ Created gradle.properties"
+
+    # 4. ANDROID SDK
+    - name: 📱 Install Android SDK
       run: |
-        echo "org.gradle.jvmargs=-Xmx2048m -XX:MaxMetaspaceSize=512m" > gradle.properties
-    
-    - name: Make gradlew executable
-      run: chmod +x gradlew
-    
-    - name: Build without CMake version
+        $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-33" "build-tools;33.0.0"
+
+    # 5. BUILD
+    - name: 🏗️ Build APK
       run: |
+        chmod +x gradlew
         ./gradlew clean assembleDebug --no-daemon --stacktrace
-    
-    - uses: actions/upload-artifact@v4
+
+    # 6. APK LINKS
+    - name: 🔗 Generate APK Links
+      run: |
+        echo "=== APK DOWNLOAD LINKS ==="
+        APK_FILE=$(find . -name "*.apk" -type f | head -1)
+        if [ -f "$APK_FILE" ]; then
+          echo "📱 DIRECT DOWNLOAD: Look in Artifacts section below!"
+          echo "💾 FILENAME: $(basename $APK_FILE)"
+          echo "📁 PATH: $APK_FILE"
+          echo "🔄 Refresh page and check Artifacts section"
+        else
+          echo "❌ APK not found - check build logs above"
+          find . -name "build" -type d | head -5
+        fi
+
+    # 7. UPLOAD APK
+    - name: 📦 Upload APK
+      uses: actions/upload-artifact@v4
       with:
-        name: KotuktoperGram-APK
+        name: KotuktoperGram-iOS26
         path: "**/build/outputs/apk/**/*.apk"
+
+    # 8. FINAL SUCCESS
+    - name: 🎉 Build Complete
+      run: |
+        echo "=========================================="
+        echo "🚀 KOTUKTOPERGRAM iOS26 BUILD COMPLETE!"
+        echo "=========================================="
+        echo "📱 APK: Download from ARTIFACTS section below"
+        echo "🔗 Direct: Refresh page → Scroll down → Artifacts"
+        echo "💾 File: KotuktoperGram-iOS26.zip"
+        echo "📦 Contains: Your APK file"
+        echo "=========================================="
