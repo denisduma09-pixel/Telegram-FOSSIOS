@@ -1,12 +1,49 @@
-name: Build
+name: 🚀 KOTUKTOPER WITH FIXES
 on: workflow_dispatch
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    
     steps:
-      - uses: actions/checkout@v4
-      - run: chmod +x gradlew && ./gradlew assembleDebug
-      - uses: actions/upload-artifact@v4
-        with:
-          name: app
-          path: "**/*.apk"
+    - uses: actions/checkout@v4
+    
+    - name: Setup Java
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+    
+    - name: Apply fixes
+      run: |
+        # ФИКС 1: Создаем API_KEYS
+        echo "appId=123456" > TMessagesProj/API_KEYS
+        echo "appHash=abcdef1234567890" >> TMessagesProj/API_KEYS
+        echo "✅ API_KEYS created"
+        
+        # ФИКС 2: gradle.properties для памяти
+        echo "org.gradle.jvmargs=-Xmx2048m" > gradle.properties
+        echo "✅ gradle.properties created"
+        
+        # ФИКС 3: Проверяем build.gradle
+        echo "📁 Checking build.gradle structure..."
+        find . -name "build.gradle" | head -3
+
+    - name: Install Android SDK
+      run: |
+        $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-33" "build-tools;33.0.0"
+
+    - name: Build with fixes
+      run: |
+        chmod +x gradlew
+        ./gradlew clean assembleDebug --no-daemon --stacktrace
+
+    - name: Find APK
+      run: |
+        echo "🔍 Searching for APK..."
+        find . -name "*.apk" -type f | head -5
+
+    - uses: actions/upload-artifact@v4
+      with:
+        name: KotuktoperGram-iOS26
+        path: "**/build/outputs/apk/**/*.apk"
