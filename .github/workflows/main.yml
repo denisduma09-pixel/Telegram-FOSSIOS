@@ -1,4 +1,5 @@
-name: 🚀 KOTUKTOPER JAVA17 BUILD
+
+name: 🚀 KOTUKTOPER FINAL BUILD
 on: workflow_dispatch
 jobs:
   build:
@@ -13,6 +14,13 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
     
+    - name: Fix Gradle memory settings
+      run: |
+        # Создаем gradle.properties с правильными настройками для Java 17
+        echo "org.gradle.jvmargs=-Xmx2048m -XX:MaxMetaspaceSize=512m" > gradle.properties
+        echo "android.useAndroidX=true" >> gradle.properties
+        echo "android.enableJetifier=true" >> gradle.properties
+    
     - name: Install Android SDK 33
       run: |
         $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-33" "build-tools;33.0.0"
@@ -20,7 +28,7 @@ jobs:
     - name: Make gradlew executable
       run: chmod +x gradlew
     
-    - name: Build with Java 17
+    - name: Build with fixed memory
       run: |
         ./gradlew clean assembleDebug --no-daemon --stacktrace
     
