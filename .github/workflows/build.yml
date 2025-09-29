@@ -17,7 +17,7 @@ jobs:
 
     - name: 🛠️ Fix build files
       run: |
-        # Простой фикс build.gradle
+        # Создаем простой build.gradle
         cat > TMessagesProj/build.gradle << 'EOF'
 plugins {
     id 'com.android.application'
