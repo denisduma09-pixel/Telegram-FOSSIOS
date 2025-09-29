@@ -1,23 +1,28 @@
-name: 🚀 KOTUKTOPER FIX BUILD
-
+name: 🚀 KOTUKTOPER BUILD
 on: workflow_dispatch
-
 jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 25
     
     steps:
-    - name: 📥 Checkout
-      uses: actions/checkout@v4
-      
-    - name: 🏗️ Build
+    - uses: actions/checkout@v4
+    
+    - name: Set up JDK
+      uses: actions/setup-java@v4
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+    
+    - name: Make gradlew executable
+      run: chmod +x gradlew
+    
+    - name: Build with Gradle
       run: |
-        chmod +x gradlew
-        ./gradlew assembleDebug --no-daemon --stacktrace
-        
-    - name: 📦 Upload APK
-      uses: actions/upload-artifact@v4
+        ./gradlew assembleDebug --no-daemon --stacktrace \
+          -Dorg.gradle.jvmargs="-Xmx2048m -XX:MaxMetaspaceSize=512m"
+    
+    - uses: actions/upload-artifact@v4
       with:
         name: KotuktoperGram
         path: "**/build/outputs/apk/**/*.apk"
