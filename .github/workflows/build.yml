@@ -1,4 +1,4 @@
-name: 🚀 KOTUKTOPER WITH FIXES
+name: 🚀 FIX APP_PACKAGE
 on: workflow_dispatch
 
 jobs:
@@ -14,36 +14,31 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
     
-    - name: Apply fixes
+    - name: Fix APP_PACKAGE error
       run: |
-        # ФИКС 1: Создаем API_KEYS
-        echo "appId=123456" > TMessagesProj/API_KEYS
-        echo "appHash=abcdef1234567890" >> TMessagesProj/API_KEYS
-        echo "✅ API_KEYS created"
+        # ФИКС: Заменяем APP_PACKAGE в TMessagesProj_App
+        cd TMessagesProj_App
+        sed -i 's/APP_PACKAGE/"org.kotuktoper.ios26"/g' build.gradle
+        echo "✅ Fixed APP_PACKAGE in TMessagesProj_App"
+        echo "=== Fixed line 26 ==="
+        sed -n '20,30p' build.gradle
         
-        # ФИКС 2: gradle.properties для памяти
+        # Также фиксим основной проект
+        cd ../TMessagesProj
+        echo "appId=123456" > API_KEYS
+        echo "appHash=abcdef1234567890" >> API_KEYS
+        echo "✅ Created API_KEYS"
+
+    - name: Create gradle.properties
+      run: |
         echo "org.gradle.jvmargs=-Xmx2048m" > gradle.properties
-        echo "✅ gradle.properties created"
-        
-        # ФИКС 3: Проверяем build.gradle
-        echo "📁 Checking build.gradle structure..."
-        find . -name "build.gradle" | head -3
 
-    - name: Install Android SDK
-      run: |
-        $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-33" "build-tools;33.0.0"
-
-    - name: Build with fixes
+    - name: Build
       run: |
         chmod +x gradlew
         ./gradlew clean assembleDebug --no-daemon --stacktrace
 
-    - name: Find APK
-      run: |
-        echo "🔍 Searching for APK..."
-        find . -name "*.apk" -type f | head -5
-
     - uses: actions/upload-artifact@v4
       with:
-        name: KotuktoperGram-iOS26
+        name: KotuktoperGram-APK
         path: "**/build/outputs/apk/**/*.apk"
