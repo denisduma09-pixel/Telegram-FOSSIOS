@@ -1,12 +1,28 @@
-name: Build
+name: 🚀 FINAL BUILD
 on: workflow_dispatch
+
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - run: chmod +x gradlew && ./gradlew assembleDebug
-      - uses: actions/upload-artifact@v4
-        with:
-          name: app
-          path: "**/*.apk"
+    - uses: actions/checkout@v4
+    
+    - name: Setup Java 11 (совместимый с Gradle 7.2)
+      uses: actions/setup-java@v4
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+    
+    - name: Create gradle.properties
+      run: |
+        echo "org.gradle.jvmargs=-Xmx2048m" > gradle.properties
+    
+    - name: Build
+      run: |
+        chmod +x gradlew
+        ./gradlew assembleDebug --no-daemon --stacktrace
+    
+    - uses: actions/upload-artifact@v4
+      with:
+        name: KotuktoperGram
+        path: "**/*.apk"
