@@ -1,5 +1,4 @@
-
-name: 🚀 RADICAL ALL FIXES
+name: 🚀 RADICAL WITH REPOSITORIES
 on: workflow_dispatch
 
 jobs:
@@ -14,51 +13,97 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
     
-    - name: RADICAL FIX - Replace ALL build files
+    - name: RADICAL FIX with repositories
       run: |
-        echo "=== RADICAL FIX - REPLACING ALL FILES ==="
+        echo "=== RADICAL FIX WITH REPOSITORIES ==="
         
-        # ПОЛНОСТЬЮ ЗАМЕНЯЕМ TMessagesProj_App/build.gradle
-        cd TMessagesProj_App
-        echo 'plugins { id "com.android.application" }' > build.gradle
-        echo 'android {' >> build.gradle
-        echo 'compileSdkVersion 33' >> build.gradle
-        echo 'buildToolsVersion "33.0.0"' >> build.gradle
-        echo 'defaultConfig {' >> build.gradle
-        echo 'applicationId "org.kotuktoper.ios26"' >> build.gradle
-        echo 'minSdkVersion 21' >> build.gradle
-        echo 'targetSdkVersion 33' >> build.gradle
-        echo 'versionCode 26001' >> build.gradle
-        echo 'versionName "iOS26.1.0"' >> build.gradle
-        echo '}}' >> build.gradle
-        echo 'dependencies { implementation fileTree(dir: "libs", include: ["*.jar"]) }' >> build.gradle
-        echo "✅ TMessagesProj_App COMPLETELY REPLACED"
+        # ОСНОВНОЙ build.gradle С РЕПОЗИТОРИЯМИ
+        cd TMessagesProj
+        cat > build.gradle << 'EOF'
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.0.3'
+    }
+}
+
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    compileSdkVersion 33
+    buildToolsVersion '33.0.0'
+    defaultConfig {
+        applicationId "org.kotuktoper.ios26"
+        minSdkVersion 21
+        targetSdkVersion 33
+        versionCode 26001
+        versionName "iOS26.1.0"
+    }
+    buildTypes {
+        debug {
+            debuggable true
+            minifyEnabled false
+        }
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+}
+EOF
+        echo "✅ Main build.gradle with repositories"
         
-        # ПОЛНОСТЬЮ ЗАМЕНЯЕМ основной build.gradle
+        # TMessagesProj_App build.gradle
+        cd ../TMessagesProj_App
+        cat > build.gradle << 'EOF'
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    compileSdkVersion 33
+    buildToolsVersion '33.0.0'
+    defaultConfig {
+        applicationId "org.kotuktoper.ios26"
+        minSdkVersion 21
+        targetSdkVersion 33
+        versionCode 26001
+        versionName "iOS26.1.0"
+    }
+    buildTypes {
+        debug {
+            debuggable true
+            minifyEnabled false
+        }
+    }
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+}
+EOF
+        echo "✅ TMessagesProj_App build.gradle"
+        
+        # API_KEYS
         cd ../TMessagesProj
-        echo 'plugins { id "com.android.application" }' > build.gradle
-        echo 'android {' >> build.gradle
-        echo 'compileSdkVersion 33' >> build.gradle
-        echo 'buildToolsVersion "33.0.0"' >> build.gradle
-        echo 'defaultConfig {' >> build.gradle
-        echo 'applicationId "org.kotuktoper.ios26"' >> build.gradle
-        echo 'minSdkVersion 21' >> build.gradle
-        echo 'targetSdkVersion 33' >> build.gradle
-        echo 'versionCode 26001' >> build.gradle
-        echo 'versionName "iOS26.1.0"' >> build.gradle
-        echo '}}' >> build.gradle
-        echo 'dependencies { implementation fileTree(dir: "libs", include: ["*.jar"]) }' >> build.gradle
-        echo "✅ Main build.gradle COMPLETELY REPLACED"
-        
-        # ВСЕ ОСТАЛЬНЫЕ ФИКСЫ
         echo "appId=123456" > API_KEYS
         echo "appHash=abcdef1234567890" >> API_KEYS
-        echo "✅ API_KEYS created"
 
     - name: Other fixes
       run: |
         echo "org.gradle.jvmargs=-Xmx2048m" > gradle.properties
-        echo "android.useAndroidX=true" >> gradle.properties
 
     - name: Install Android SDK
       run: |
@@ -68,11 +113,6 @@ jobs:
       run: |
         chmod +x gradlew
         ./gradlew clean assembleDebug --no-daemon --stacktrace
-
-    - name: Find APK
-      run: |
-        echo "📱 APK FOUND:"
-        find . -name "*.apk" -type f | head -3
 
     - uses: actions/upload-artifact@v4
       with:
