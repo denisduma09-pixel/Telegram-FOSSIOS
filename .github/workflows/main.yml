@@ -1,8 +1,7 @@
-
-name: 🚀 KOTUKTOPER FINAL BUILD
+name: 🚀 FIND REAL ERROR
 on: workflow_dispatch
 jobs:
-  build:
+  find-error:
     runs-on: ubuntu-latest
     
     steps:
@@ -14,12 +13,9 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
     
-    - name: Fix Gradle memory settings
+    - name: Create gradle.properties
       run: |
-        # Создаем gradle.properties с правильными настройками для Java 17
         echo "org.gradle.jvmargs=-Xmx2048m -XX:MaxMetaspaceSize=512m" > gradle.properties
-        echo "android.useAndroidX=true" >> gradle.properties
-        echo "android.enableJetifier=true" >> gradle.properties
     
     - name: Install Android SDK 33
       run: |
@@ -28,11 +24,6 @@ jobs:
     - name: Make gradlew executable
       run: chmod +x gradlew
     
-    - name: Build with fixed memory
+    - name: Build and capture FIRST error
       run: |
-        ./gradlew clean assembleDebug --no-daemon --stacktrace
-    
-    - uses: actions/upload-artifact@v4
-      with:
-        name: KotuktoperGram-iOS26
-        path: "**/build/outputs/apk/**/*.apk"
+        ./gradlew clean assembleDebug --no-daemon --stacktrace 2>&1 | head -200
