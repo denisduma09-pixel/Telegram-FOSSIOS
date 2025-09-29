@@ -1,4 +1,4 @@
-name: 🚀 HARD FIX ALL
+name: 🚀 FIX MEMORY ISSUE
 on: workflow_dispatch
 
 jobs:
@@ -14,37 +14,39 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
     
-    - name: HARD FIX TMessagesProj_App
+    - name: Fix memory settings
       run: |
-        echo "=== HARD FIXING TMessagesProj_App ==="
-        cd TMessagesProj_App
+        # Создаем gradle.properties с правильными настройками для Java 17
+        echo "org.gradle.jvmargs=-Xmx2048m -XX:MaxMetaspaceSize=512m" > gradle.properties
+        echo "android.useAndroidX=true" >> gradle.properties
         
-        # Показываем проблемные строки
-        echo "=== Problem lines ==="
-        sed -n '130,140p' build.gradle
+        # Также пробуем обновить gradle wrapper
+        ./gradlew wrapper --gradle-version 7.5 --distribution-type all || echo "Gradle update failed, continuing..."
         
-        # Жесткий фикс - заменяем конкретные строки
-        sed -i '137s/.*/        versionCode 26001/' build.gradle
-        sed -i 's/APP_VERSION_CODE/26001/g' build.gradle
-        sed -i 's/APP_PACKAGE/"org.kotuktoper.ios26"/g' build.gradle
-        
-        # Удаляем dexOptions полностью
-        sed -i '/dexOptions {/,/}/d' build.gradle
-        
-        echo "=== After fix ==="
-        sed -n '130,140p' build.gradle
+        echo "✅ Memory settings fixed"
 
-    - name: Fix main project
-      run: |
-        cd TMessagesProj
-        echo "appId=123456" > API_KEYS
-        echo "appHash=abcdef1234567890" >> API_KEYS
-        echo "✅ API_KEYS created"
-
-    - name: Build
+    - name: Quick build test
       run: |
         chmod +x gradlew
-        ./gradlew clean assembleDebug --no-daemon --stacktrace
+        ./gradlew --version
+        ./gradlew clean --no-daemon
+
+    - name: Apply previous fixes
+      run: |
+        # Фиксим TMessagesProj_App
+        cd TMessagesProj_App
+        sed -i 's/APP_PACKAGE/"org.kotuktoper.ios26"/g' build.gradle
+        sed -i 's/APP_VERSION_CODE/26001/g' build.gradle
+        sed -i '/dexOptions {/,/}/d' build.gradle
+        
+        # Фиксим основной проект
+        cd ../TMessagesProj
+        echo "appId=123456" > API_KEYS
+        echo "appHash=abcdef1234567890" >> API_KEYS
+
+    - name: Build with memory fix
+      run: |
+        ./gradlew assembleDebug --no-daemon --stacktrace
 
     - uses: actions/upload-artifact@v4
       with:
