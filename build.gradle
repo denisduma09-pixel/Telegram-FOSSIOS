@@ -1,13 +1,41 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
-buildscript {
-    repositories {
-        mavenCentral()
-        google()
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    compileSdkVersion 33
+    buildToolsVersion "33.0.0"
+
+    defaultConfig {
+        applicationId "org.kotuktoper.ios26"
+        minSdkVersion 21
+        targetSdkVersion 33
+        versionCode 26001
+        versionName "iOS26.1.0"
+        
+        // 🎨 Российские цвета
+        resValue "color", "rus_red_bright", "#D52B1E"
+        resValue "color", "rus_blue_bright", "#0039A6"
     }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.3'
+
+    buildTypes {
+        debug {
+            debuggable true
+            minifyEnabled false
+            signingConfig signingConfigs.debug
+        }
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
-repositories {
-    google()
-}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+}here й
