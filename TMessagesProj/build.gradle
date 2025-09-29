@@ -1,4 +1,10 @@
+plugins {
+    id 'com.android.application'
+}
+
 android {
+    compileSdkVersion 33
+    // ... остальной код
     compileSdkVersion 33
     buildToolsVersion '33.0.0'
     ndkVersion "25.1.8937393"
