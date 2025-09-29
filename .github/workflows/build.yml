@@ -1,85 +1,33 @@
-name: 🚀 FIX DEPENDENCIES
+name: Build with fixes
 on: workflow_dispatch
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    
     steps:
     - uses: actions/checkout@v4
-    
     - name: Setup Java
       uses: actions/setup-java@v4
       with:
         java-version: '17'
         distribution: 'temurin'
     
-    - name: Fix build files with repositories
+    - name: Apply basic fixes
       run: |
-        echo "=== FIXING BUILD FILES WITH REPOSITORIES ==="
-        
-        # Создаем build.gradle с репозиториями
-        cat > TMessagesProj/build.gradle << 'EOF'
-buildscript {
-    repositories {
-        google()
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:7.0.3'
-    }
-}
-
-plugins {
-    id 'com.android.application'
-}
-
-android {
-    compileSdkVersion 33
-    buildToolsVersion '33.0.0'
-    defaultConfig {
-        applicationId "org.kotuktoper.ios26"
-        minSdkVersion 21
-        targetSdkVersion 33
-        versionCode 26001
-        versionName "iOS26.1.0"
-    }
-    buildTypes {
-        debug {
-            debuggable true
-            minifyEnabled false
-        }
-    }
-}
-
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-    }
-}
-
-dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-}
-EOF
-
-        # Создаем API_KEYS
+        # ФИКС 1: API_KEYS
         echo "appId=123456" > TMessagesProj/API_KEYS
         echo "appHash=abcdef1234567890" >> TMessagesProj/API_KEYS
-
-        echo "✅ Build files with repositories created"
-
-    - name: Create gradle.properties
-      run: |
+        
+        # ФИКС 2: gradle.properties
         echo "org.gradle.jvmargs=-Xmx2048m" > gradle.properties
 
     - name: Build
       run: |
         chmod +x gradlew
-        ./gradlew clean assembleDebug --no-daemon --stacktrace
+        ./gradlew assembleDebug --no-daemon --stacktrace
 
-    - uses: actions/upload-artifact@v4
+    - name: Upload APK
+      uses: actions/upload-artifact@v4
       with:
-        name: KotuktoperGram-APK
-        path: "**/build/outputs/apk/**/*.apk"
+        name: KotuktoperGram
+        path: "**/*.apk"
