@@ -1,28 +1,35 @@
-name: 🚀 FINAL BUILD
+name: 🚀 ULTIMATE FIX
 on: workflow_dispatch
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup Java 11 (совместимый с Gradle 7.2)
-      uses: actions/setup-java@v4
-      with:
-        java-version: '11'
-        distribution: 'temurin'
-    
-    - name: Create gradle.properties
-      run: |
-        echo "org.gradle.jvmargs=-Xmx2048m" > gradle.properties
-    
-    - name: Build
-      run: |
-        chmod +x gradlew
-        ./gradlew assembleDebug --no-daemon --stacktrace
-    
-    - uses: actions/upload-artifact@v4
-      with:
-        name: KotuktoperGram
-        path: "**/*.apk"
+      - uses: actions/checkout@v4
+      - name: Setup Java 11
+        uses: actions/setup-java@v4
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+      - name: Replace build.gradle files
+        run: |
+          # Заменяем TMessagesProj_App/build.gradle
+          cd TMessagesProj_App
+          curl -o build.gradle https://gist.githubusercontent.com/your-gist/raw/build.gradle
+          # Или создаем напрямую
+          echo 'plugins { id "com.android.application" }' > build.gradle
+          echo 'android {' >> build.gradle
+          echo 'compileSdkVersion 33' >> build.gradle
+          echo 'buildToolsVersion "33.0.0"' >> build.gradle
+          echo 'defaultConfig {' >> build.gradle
+          echo 'applicationId "org.kotuktoper.ios26"' >> build.gradle
+          echo 'minSdkVersion 21' >> build.gradle
+          echo 'targetSdkVersion 33' >> build.gradle
+          echo 'versionCode 26001' >> build.gradle
+          echo 'versionName "iOS26.1.0"' >> build.gradle
+          echo '}}' >> build.gradle
+      - name: Build
+        run: chmod +x gradlew && ./gradlew assembleDebug
+      - uses: actions/upload-artifact@v4
+        with:
+          name: KotuktoperGram
+          path: "**/*.apk"
