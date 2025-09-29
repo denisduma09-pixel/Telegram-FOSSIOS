@@ -1,4 +1,5 @@
-name: 🚀 KOTUKTOPER ALL FIXES
+
+name: 🚀 RADICAL ALL FIXES
 on: workflow_dispatch
 
 jobs:
@@ -13,31 +14,65 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
     
-    - name: Apply ALL fixes
+    - name: RADICAL FIX - Replace ALL build files
       run: |
-        # ФИКС 1: API_KEYS
-        echo "appId=123456" > TMessagesProj/API_KEYS
-        echo "appHash=abcdef1234567890" >> TMessagesProj/API_KEYS
+        echo "=== RADICAL FIX - REPLACING ALL FILES ==="
         
-        # ФИКС 2: Память Java
+        # ПОЛНОСТЬЮ ЗАМЕНЯЕМ TMessagesProj_App/build.gradle
+        cd TMessagesProj_App
+        echo 'plugins { id "com.android.application" }' > build.gradle
+        echo 'android {' >> build.gradle
+        echo 'compileSdkVersion 33' >> build.gradle
+        echo 'buildToolsVersion "33.0.0"' >> build.gradle
+        echo 'defaultConfig {' >> build.gradle
+        echo 'applicationId "org.kotuktoper.ios26"' >> build.gradle
+        echo 'minSdkVersion 21' >> build.gradle
+        echo 'targetSdkVersion 33' >> build.gradle
+        echo 'versionCode 26001' >> build.gradle
+        echo 'versionName "iOS26.1.0"' >> build.gradle
+        echo '}}' >> build.gradle
+        echo 'dependencies { implementation fileTree(dir: "libs", include: ["*.jar"]) }' >> build.gradle
+        echo "✅ TMessagesProj_App COMPLETELY REPLACED"
+        
+        # ПОЛНОСТЬЮ ЗАМЕНЯЕМ основной build.gradle
+        cd ../TMessagesProj
+        echo 'plugins { id "com.android.application" }' > build.gradle
+        echo 'android {' >> build.gradle
+        echo 'compileSdkVersion 33' >> build.gradle
+        echo 'buildToolsVersion "33.0.0"' >> build.gradle
+        echo 'defaultConfig {' >> build.gradle
+        echo 'applicationId "org.kotuktoper.ios26"' >> build.gradle
+        echo 'minSdkVersion 21' >> build.gradle
+        echo 'targetSdkVersion 33' >> build.gradle
+        echo 'versionCode 26001' >> build.gradle
+        echo 'versionName "iOS26.1.0"' >> build.gradle
+        echo '}}' >> build.gradle
+        echo 'dependencies { implementation fileTree(dir: "libs", include: ["*.jar"]) }' >> build.gradle
+        echo "✅ Main build.gradle COMPLETELY REPLACED"
+        
+        # ВСЕ ОСТАЛЬНЫЕ ФИКСЫ
+        echo "appId=123456" > API_KEYS
+        echo "appHash=abcdef1234567890" >> API_KEYS
+        echo "✅ API_KEYS created"
+
+    - name: Other fixes
+      run: |
         echo "org.gradle.jvmargs=-Xmx2048m" > gradle.properties
-        
-        # ФИКС 3: Российские цвета (если нужно)
-        echo "✅ All fixes applied"
+        echo "android.useAndroidX=true" >> gradle.properties
 
     - name: Install Android SDK
       run: |
         $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-33" "build-tools;33.0.0"
 
-    - name: Build with fixes
+    - name: Build
       run: |
         chmod +x gradlew
         ./gradlew clean assembleDebug --no-daemon --stacktrace
 
     - name: Find APK
       run: |
-        echo "📱 APK files:"
-        find . -name "*.apk" -type f | head -5
+        echo "📱 APK FOUND:"
+        find . -name "*.apk" -type f | head -3
 
     - uses: actions/upload-artifact@v4
       with:
