@@ -1,4 +1,4 @@
-name: 🚀 FIX APP_PACKAGE
+name: 🚀 HARD FIX ALL
 on: workflow_dispatch
 
 jobs:
@@ -14,24 +14,32 @@ jobs:
         java-version: '17'
         distribution: 'temurin'
     
-    - name: Fix APP_PACKAGE error
+    - name: HARD FIX TMessagesProj_App
       run: |
-        # ФИКС: Заменяем APP_PACKAGE в TMessagesProj_App
+        echo "=== HARD FIXING TMessagesProj_App ==="
         cd TMessagesProj_App
-        sed -i 's/APP_PACKAGE/"org.kotuktoper.ios26"/g' build.gradle
-        echo "✅ Fixed APP_PACKAGE in TMessagesProj_App"
-        echo "=== Fixed line 26 ==="
-        sed -n '20,30p' build.gradle
         
-        # Также фиксим основной проект
-        cd ../TMessagesProj
+        # Показываем проблемные строки
+        echo "=== Problem lines ==="
+        sed -n '130,140p' build.gradle
+        
+        # Жесткий фикс - заменяем конкретные строки
+        sed -i '137s/.*/        versionCode 26001/' build.gradle
+        sed -i 's/APP_VERSION_CODE/26001/g' build.gradle
+        sed -i 's/APP_PACKAGE/"org.kotuktoper.ios26"/g' build.gradle
+        
+        # Удаляем dexOptions полностью
+        sed -i '/dexOptions {/,/}/d' build.gradle
+        
+        echo "=== After fix ==="
+        sed -n '130,140p' build.gradle
+
+    - name: Fix main project
+      run: |
+        cd TMessagesProj
         echo "appId=123456" > API_KEYS
         echo "appHash=abcdef1234567890" >> API_KEYS
-        echo "✅ Created API_KEYS"
-
-    - name: Create gradle.properties
-      run: |
-        echo "org.gradle.jvmargs=-Xmx2048m" > gradle.properties
+        echo "✅ API_KEYS created"
 
     - name: Build
       run: |
