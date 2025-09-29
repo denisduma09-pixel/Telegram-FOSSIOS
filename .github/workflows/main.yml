@@ -1,4 +1,4 @@
-name: 🚀 KOTUKTOPER FIXED BUILD
+name: 🚀 KOTUKTOPER JAVA17 BUILD
 on: workflow_dispatch
 jobs:
   build:
@@ -7,21 +7,22 @@ jobs:
     steps:
     - uses: actions/checkout@v4
     
-    - name: Set up JDK 11
+    - name: Set up JDK 17
       uses: actions/setup-java@v4
       with:
-        java-version: '11'
+        java-version: '17'
         distribution: 'temurin'
     
     - name: Install Android SDK 33
       run: |
-        yes | $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-33" "build-tools;33.0.0"
+        $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-33" "build-tools;33.0.0"
     
-    - name: Clean and build
+    - name: Make gradlew executable
+      run: chmod +x gradlew
+    
+    - name: Build with Java 17
       run: |
-        chmod +x gradlew
-        ./gradlew clean
-        ./gradlew assembleDebug --no-daemon --stacktrace
+        ./gradlew clean assembleDebug --no-daemon --stacktrace
     
     - uses: actions/upload-artifact@v4
       with:
