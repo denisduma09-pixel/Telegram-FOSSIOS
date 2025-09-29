@@ -1,38 +1,23 @@
-name: 🚀 ULTRA KOTUKTOPER BUILD
+name: 🚀 KOTUKTOPER FIX BUILD
 
-on: 
-  workflow_dispatch:
-  push:
-    branches: [ main ]
+on: workflow_dispatch
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 25
     
     steps:
     - name: 📥 Checkout
       uses: actions/checkout@v4
       
-    - name: 🏗️ Ultra Fast Build
+    - name: 🏗️ Build
       run: |
         chmod +x gradlew
-        echo "⚡ ЗАПУСК УЛЬТРА-СБОРКИ..."
-        
-        # ТОЛЬКО САМАЯ ВАЖНАЯ КОМАНДА
-        ./gradlew assembleDebug \
-          --no-daemon \
-          --parallel \
-          --max-workers=4 \
-          --build-cache \
-          --configuration-cache \
-          --stacktrace
-        
-        echo "✅ СБОРКА ЗАВЕРШЕНА!"
+        ./gradlew assembleDebug --no-daemon --stacktrace
         
     - name: 📦 Upload APK
       uses: actions/upload-artifact@v4
       with:
-        name: KotuktoperGram-Ultra
+        name: KotuktoperGram
         path: "**/build/outputs/apk/**/*.apk"
-        retention-days: 30
