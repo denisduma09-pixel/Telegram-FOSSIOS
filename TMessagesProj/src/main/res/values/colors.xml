@@ -1,11 +1,87 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="divider">#dcdcdc</color>
-    <color name="widget_name">#212121</color>
-    <color name="widget_badge">#ffffff</color>
-    <color name="widget_time">#96999C</color>
-    <color name="widget_text">#8B8D8F</color>
-    <color name="widget_divider">#d9d9d9</color>
-    <color name="widget_action_text">#8B8D8F</color>
-    <color name="widget_edit_text">#999999</color>
+    <!-- 🌟 KOTUKTOPERGRAM RUSSIAN GLOW -->
+
+    <!-- ❤️🤍💙 ОСНОВНАЯ ПАЛИТРА -->
+    <color name="rus_red_bright">#D52B1E</color>
+    <color name="rus_red_deep">#CC0000</color>
+    <color name="rus_red_light">#FF6B6B</color>
+    <color name="rus_blue_bright">#0039A6</color>
+    <color name="rus_blue_deep">#00247D</color>
+    <color name="rus_blue_light">#0057B8</color>
+    <color name="rus_white">#FFFFFF</color>
+    <color name="rus_silver">#F0F0F0</color>
+    <color name="rus_gold">#FFD700</color>
+
+    <!-- 🌌 ФОНЫ -->
+    <color name="bg_rus_night">#0A0A1A</color>
+    <color name="bg_rus_dusk">#1A1A2A</color>
+    <color name="bg_rus_sky">#2A2A3A</color>
+    <color name="bg_rus_midnight">#0F0F1F</color>
+
+    <!-- ✨ DYNAMIC ISLAND -->
+    <color name="dynamic_island_bg">#CC1A1A2A</color>
+    <color name="dynamic_island_glow">#66D52B1E</color>
+    <color name="dynamic_island_pulse">#330039A6</color>
+
+    <!-- 🎨 ОСНОВНЫЕ ЦВЕТА ТЕМЫ -->
+    <color name="theme_primary">@color/rus_red_bright</color>
+    <color name="theme_accent">@color/rus_blue_bright</color>
+    <color name="theme_background">@color/bg_rus_night</color>
+    <color name="theme_surface">@color/bg_rus_dusk</color>
+    <color name="theme_error">@color/rus_red_light</color>
+
+    <!-- 💬 ПУЗЫРИ СООБЩЕНИЙ -->
+    <color name="bubble_out_start">@color/rus_red_bright</color>
+    <color name="bubble_out_end">@color/rus_red_deep</color>
+    <color name="bubble_in_start">@color/rus_blue_bright</color>
+    <color name="bubble_in_end">@color/rus_blue_deep</color>
+    <color name="bubble_out_text">@color/rus_white</color>
+    <color name="bubble_in_text">@color/rus_white</color>
+
+    <!-- 📱 iOS ЭЛЕМЕНТЫ -->
+    <color name="ios_navbar">#801A1A2A</color>
+    <color name="ios_tabbar">#CC0F0F1F</color>
+    <color name="ios_alert">#CC2A2A3A</color>
+
+    <!-- 🌈 ГРАДИЕНТНЫЕ ЭФФЕКТЫ -->
+    <color name="glow_center">#40FF6B6B</color>
+    <color name="glow_outer">#200057B8</color>
+    <color name="glass_effect">#301A1A2A</color>
+    <color name="liquid_reflection">#15FFFFFF</color>
+
+    <!-- 📝 ТЕКСТ -->
+    <color name="text_primary">#FFFFFF</color>
+    <color name="text_secondary">#CCFFFFFF</color>
+    <color name="text_accent">@color/rus_blue_light</color>
+    <color name="text_hint">#88FFFFFF</color>
+    <color name="text_link">@color/rus_blue_light</color>
+
+    <!-- 🔘 КНОПКИ И КОНТРОЛЫ -->
+    <color name="button_primary">@color/rus_red_bright</color>
+    <color name="button_secondary">@color/rus_blue_bright</color>
+    <color name="button_disabled">#FF5A5A5A</color>
+    <color name="switch_track">@color/rus_red_light</color>
+    <color name="switch_thumb">@color/rus_blue_light</color>
+
+    <!-- 📊 СТАТУСЫ И ИНДИКАТОРЫ -->
+    <color name="status_online">@color/rus_blue_light</color>
+    <color name="status_offline">@color/rus_red_light</color>
+    <color name="status_unread">@color/rus_gold</color>
+    <color name="status_typing">@color/rus_blue_light</color>
+
+    <!-- 🏷️ БЭДЖИ И МЕТКИ -->
+    <color name="badge_important">@color/rus_red_bright</color>
+    <color name="badge_normal">@color/rus_blue_bright</color>
+    <color name="badge_unread">@color/rus_gold</color>
+
+    <!-- ⚡ ДОПОЛНИТЕЛЬНЫЕ АКЦЕНТЫ -->
+    <color name="accent_success">#FF4CAF50</color>
+    <color name="accent_warning">#FFFFC107</color>
+    <color name="accent_info">@color/rus_blue_light</color>
+
+    <!-- 🎭 ПОЛУПРОЗРАЧНОСТИ -->
+    <color name="transparent_10">#1AFFFFFF</color>
+    <color name="transparent_20">#33FFFFFF</color>
+    <color name="transparent_50">#80FFFFFF</color>
 </resources>
