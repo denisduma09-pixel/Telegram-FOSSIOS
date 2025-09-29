@@ -1,83 +1,12 @@
-name: 🚀 RADICAL FIX
+name: Build
 on: workflow_dispatch
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    
-    - name: Setup Java
-      uses: actions/setup-java@v4
-      with:
-        java-version: '17'
-        distribution: 'temurin'
-    
-    - name: Fix build files
-      run: |
-        echo "=== FIXING BUILD FILES ==="
-        
-        # Основной build.gradle с репозиториями
-        cd TMessagesProj
-        echo 'buildscript {' > build.gradle
-        echo 'repositories {' >> build.gradle
-        echo 'google()' >> build.gradle
-        echo 'mavenCentral()' >> build.gradle
-        echo '}' >> build.gradle
-        echo 'dependencies {' >> build.gradle
-        echo "classpath 'com.android.tools.build:gradle:7.0.3'" >> build.gradle
-        echo '}' >> build.gradle
-        echo '}' >> build.gradle
-        echo '' >> build.gradle
-        echo 'plugins {' >> build.gradle
-        echo 'id "com.android.application"' >> build.gradle
-        echo '}' >> build.gradle
-        echo '' >> build.gradle
-        echo 'android {' >> build.gradle
-        echo 'compileSdkVersion 33' >> build.gradle
-        echo 'buildToolsVersion "33.0.0"' >> build.gradle
-        echo 'defaultConfig {' >> build.gradle
-        echo 'applicationId "org.kotuktoper.ios26"' >> build.gradle
-        echo 'minSdkVersion 21' >> build.gradle
-        echo 'targetSdkVersion 33' >> build.gradle
-        echo 'versionCode 26001' >> build.gradle
-        echo 'versionName "iOS26.1.0"' >> build.gradle
-        echo '}' >> build.gradle
-        echo 'buildTypes {' >> build.gradle
-        echo 'debug {' >> build.gradle
-        echo 'debuggable true' >> build.gradle
-        echo 'minifyEnabled false' >> build.gradle
-        echo '}' >> build.gradle
-        echo '}' >> build.gradle
-        echo '}' >> build.gradle
-        echo '' >> build.gradle
-        echo 'allprojects {' >> build.gradle
-        echo 'repositories {' >> build.gradle
-        echo 'google()' >> build.gradle
-        echo 'mavenCentral()' >> build.gradle
-        echo '}' >> build.gradle
-        echo '}' >> build.gradle
-        echo '' >> build.gradle
-        echo 'dependencies {' >> build.gradle
-        echo 'implementation fileTree(dir: "libs", include: ["*.jar"])' >> build.gradle
-        echo '}' >> build.gradle
-        
-        echo "✅ Main build.gradle created"
-        
-        # API_KEYS
-        echo "appId=123456" > API_KEYS
-        echo "appHash=abcdef1234567890" >> API_KEYS
-
-    - name: Other fixes
-      run: |
-        echo "org.gradle.jvmargs=-Xmx2048m" > gradle.properties
-
-    - name: Build
-      run: |
-        chmod +x gradlew
-        ./gradlew assembleDebug --no-daemon --stacktrace
-
-    - uses: actions/upload-artifact@v4
-      with:
-        name: KotuktoperGram
-        path: "**/*.apk"
+      - uses: actions/checkout@v4
+      - run: chmod +x gradlew && ./gradlew assembleDebug
+      - uses: actions/upload-artifact@v4
+        with:
+          name: app
+          path: "**/*.apk"
