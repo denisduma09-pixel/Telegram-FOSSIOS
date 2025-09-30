@@ -1,4 +1,4 @@
-name: 🚀 BUILD WITH JAVA 11
+name: 🚀 FIX RESOURCES
 on: workflow_dispatch
 jobs:
   build:
@@ -6,28 +6,30 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
-      - name: Setup Java 11 (совместимая версия)
+      - name: Setup Java 11
         uses: actions/setup-java@v4
         with:
           java-version: '11'
           distribution: 'temurin'
       
-      - name: Fix gradle.properties
+      - name: Fix Android SDK and resources
         run: |
+          # Устанавливаем Android SDK
+          $ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager "platforms;android-33" "build-tools;33.0.0"
+          
+          # Создаем gradle.properties
           echo "org.gradle.jvmargs=-Xmx2048m" > gradle.properties
+          echo "android.useAndroidX=true" >> gradle.properties
+          echo "android.enableJetifier=true" >> gradle.properties
       
-      - name: Build APK
+      - name: Clean and rebuild
         run: |
           chmod +x gradlew
-          ./gradlew clean assembleDebug --no-daemon --stacktrace
+          ./gradlew clean
+          ./gradlew assembleDebug --no-daemon --stacktrace --info
       
-      - name: Find and upload APK
-        run: |
-          echo "=== Searching for APK ==="
-          find . -name "*.apk" -type f | head -5
-        continue-on-error: true
-      
-      - uses: actions/upload-artifact@v4
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
         with:
-          name: KotuktoperGram-APK
+          name: KotuktoperGram
           path: "**/build/outputs/apk/**/*.apk"
