@@ -1,12 +1,33 @@
-name: Build
+name: 🚀 BUILD WITH JAVA 11
 on: workflow_dispatch
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - run: chmod +x gradlew && ./gradlew assembleDebug
+      
+      - name: Setup Java 11 (совместимая версия)
+        uses: actions/setup-java@v4
+        with:
+          java-version: '11'
+          distribution: 'temurin'
+      
+      - name: Fix gradle.properties
+        run: |
+          echo "org.gradle.jvmargs=-Xmx2048m" > gradle.properties
+      
+      - name: Build APK
+        run: |
+          chmod +x gradlew
+          ./gradlew clean assembleDebug --no-daemon --stacktrace
+      
+      - name: Find and upload APK
+        run: |
+          echo "=== Searching for APK ==="
+          find . -name "*.apk" -type f | head -5
+        continue-on-error: true
+      
       - uses: actions/upload-artifact@v4
         with:
-          name: app
-          path: "**/*.apk"
+          name: KotuktoperGram-APK
+          path: "**/build/outputs/apk/**/*.apk"
