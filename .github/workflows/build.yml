@@ -24,19 +24,17 @@ jobs:
       
       - name: Fix string resources
         run: |
-          # Создаем минимальный strings.xml чтобы избежать ошибок
+          # Создаем strings.xml простым способом
           mkdir -p TMessagesProj/src/main/res/values
-          cat > TMessagesProj/src/main/res/values/strings.xml << 'EOF'
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string name="app_name">KotuktoperGram</string>
-    <string name="ActionGroupCallEnded">Call ended</string>
-    <string name="ActionGroupCallJustStarted">Call started</string>
-    <string name="CancelForward">Cancel</string>
-    <string name="CancelForwardMessage">Cancel forward</string>
-    <string name="ClearRecentEmoji">Clear recent</string>
-</resources>
-EOF
+          echo '<?xml version="1.0" encoding="utf-8"?>' > TMessagesProj/src/main/res/values/strings.xml
+          echo '<resources>' >> TMessagesProj/src/main/res/values/strings.xml
+          echo '    <string name="app_name">KotuktoperGram</string>' >> TMessagesProj/src/main/res/values/strings.xml
+          echo '    <string name="ActionGroupCallEnded">Call ended</string>' >> TMessagesProj/src/main/res/values/strings.xml
+          echo '    <string name="ActionGroupCallJustStarted">Call started</string>' >> TMessagesProj/src/main/res/values/strings.xml
+          echo '    <string name="CancelForward">Cancel</string>' >> TMessagesProj/src/main/res/values/strings.xml
+          echo '    <string name="CancelForwardMessage">Cancel forward</string>' >> TMessagesProj/src/main/res/values/strings.xml
+          echo '    <string name="ClearRecentEmoji">Clear recent</string>' >> TMessagesProj/src/main/res/values/strings.xml
+          echo '</resources>' >> TMessagesProj/src/main/res/values/strings.xml
           echo "✅ Created basic strings.xml"
       
       - name: Build
