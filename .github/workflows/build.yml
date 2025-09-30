@@ -1,35 +1,103 @@
-name: 🚀 ULTIMATE FIX
+name: 🚀 FIX ALL GRADLE FILES
 on: workflow_dispatch
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Setup Java 11
-        uses: actions/setup-java@v4
-        with:
-          java-version: '11'
-          distribution: 'temurin'
-      - name: Replace build.gradle files
-        run: |
-          # Заменяем TMessagesProj_App/build.gradle
-          cd TMessagesProj_App
-          curl -o build.gradle https://gist.githubusercontent.com/your-gist/raw/build.gradle
-          # Или создаем напрямую
-          echo 'plugins { id "com.android.application" }' > build.gradle
-          echo 'android {' >> build.gradle
-          echo 'compileSdkVersion 33' >> build.gradle
-          echo 'buildToolsVersion "33.0.0"' >> build.gradle
-          echo 'defaultConfig {' >> build.gradle
-          echo 'applicationId "org.kotuktoper.ios26"' >> build.gradle
-          echo 'minSdkVersion 21' >> build.gradle
-          echo 'targetSdkVersion 33' >> build.gradle
-          echo 'versionCode 26001' >> build.gradle
-          echo 'versionName "iOS26.1.0"' >> build.gradle
-          echo '}}' >> build.gradle
-      - name: Build
-        run: chmod +x gradlew && ./gradlew assembleDebug
-      - uses: actions/upload-artifact@v4
-        with:
-          name: KotuktoperGram
-          path: "**/*.apk"
+    - uses: actions/checkout@v4
+    - name: Setup Java 11
+      uses: actions/setup-java@v4
+      with:
+        java-version: '11'
+        distribution: 'temurin'
+    - name: Fix ALL gradle files
+      run: |
+        # 1. КОРНЕВОЙ build.gradle
+        cat > build.gradle << 'EOF'
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:7.0.3'
+    }
+}
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
+EOF
+
+        # 2. TMessagesProj_App/build.gradle
+        cat > TMessagesProj_App/build.gradle << 'EOF'
+plugins {
+    id 'com.android.application'
+}
+android {
+    compileSdkVersion 33
+    buildToolsVersion "33.0.0"
+    defaultConfig {
+        applicationId "org.kotuktoper.ios26"
+        minSdkVersion 21
+        targetSdkVersion 33
+        versionCode 26001
+        versionName "iOS26.1.0"
+    }
+    buildTypes {
+        debug {
+            debuggable true
+            minifyEnabled false
+        }
+    }
+}
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+}
+EOF
+
+        # 3. TMessagesProj/build.gradle
+        cat > TMessagesProj/build.gradle << 'EOF'
+plugins {
+    id 'com.android.application'
+}
+android {
+    compileSdkVersion 33
+    buildToolsVersion "33.0.0"
+    defaultConfig {
+        applicationId "org.kotuktoper.ios26"
+        minSdkVersion 21
+        targetSdkVersion 33
+        versionCode 26001
+        versionName "iOS26.1.0"
+    }
+    buildTypes {
+        debug {
+            debuggable true
+            minifyEnabled false
+        }
+    }
+}
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+}
+EOF
+
+        # 4. API_KEYS
+        echo "appId=123456" > TMessagesProj/API_KEYS
+        echo "appHash=abcdef1234567890" >> TMessagesProj/API_KEYS
+
+        echo "✅ ALL FILES FIXED"
+    - name: Build
+      run: |
+        chmod +x gradlew
+        ./gradlew assembleDebug --stacktrace
+    - uses: actions/upload-artifact@v4
+      with:
+        name: KotuktoperGram
+        path: "**/*.apk"
