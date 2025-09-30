@@ -19,27 +19,17 @@ jobs:
           
           # Создаем простой ApplicationLoader если его нет
           if [ ! -f "ApplicationLoader.java" ]; then
-            cat > ApplicationLoader.java << 'EOF'
-package org.telegram.messenger;
-public class ApplicationLoader {}
-EOF
+            echo "package org.telegram.messenger;" > ApplicationLoader.java
+            echo "public class ApplicationLoader {}" >> ApplicationLoader.java
             echo "✅ Created ApplicationLoader.java"
           fi
           
           # Фиксим ApplicationLoaderImpl - убираем extends и @Override
-          cat > ApplicationLoaderImpl.java << 'EOF'
-package org.telegram.messenger;
-public class ApplicationLoaderImpl {
-    // Fixed version without inheritance errors
-}
-EOF
+          echo "package org.telegram.messenger;" > ApplicationLoaderImpl.java
+          echo "public class ApplicationLoaderImpl {" >> ApplicationLoaderImpl.java
+          echo "    // Fixed version without inheritance errors" >> ApplicationLoaderImpl.java
+          echo "}" >> ApplicationLoaderImpl.java
           echo "✅ Fixed ApplicationLoaderImpl.java"
-      
-      - name: Fix strings.xml formatting error
-        run: |
-          # Просто удаляем проблемный файл чтобы избежать ошибки
-          rm -f TMessagesProj/src/main/res/values-ko/strings.xml
-          echo "✅ Removed problematic strings.xml"
       
       - name: Build
         run: |
