@@ -1,7 +1,8 @@
-name: 🚀 DEBUG COMPILATION
+
+name: 🚀 FULL DEBUG LOGS
 on: workflow_dispatch
 jobs:
-  build:
+  debug:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -10,11 +11,39 @@ jobs:
         with:
           java-version: '11'
           distribution: 'temurin'
-      - name: Build with detailed logs
+      - name: Build with MAXIMUM DEBUG
         run: |
           chmod +x gradlew
-          ./gradlew clean assembleDebug --no-daemon --stacktrace --info 2>&1 | grep -A 20 -B 5 "error:" || echo "No specific errors found"
-      - name: Try to find APK anyway
+          echo "=== STARTING ULTIMATE DEBUG BUILD ==="
+          ./gradlew clean
+          ./gradlew assembleDebug --no-daemon --stacktrace --info --debug --scan 2>&1 | tee full_debug.log
+          echo "=== BUILD FINISHED ==="
+      - name: Analyze build results
         run: |
-          find . -name "*.apk" -type f | head -5 || echo "No APK found"
-        continue-on-error: true
+          echo "=== APK SEARCH ==="
+          find . -name "*.apk" -type f 2>/dev/null | while read f; do
+            echo "🎯 FOUND: $f"
+            ls -lh "$f"
+          done
+          
+          echo "=== BUILD SUCCESS CHECK ==="
+          if grep -q "BUILD SUCCESSFUL" full_debug.log; then
+            echo "✅ BUILD WAS SUCCESSFUL"
+          else
+            echo "❌ BUILD FAILED"
+          fi
+          
+          echo "=== TASK EXECUTION ==="
+          grep -E "> Task :|FAILED|SUCCESS|error:|warning:" full_debug.log | tail -20
+      - name: Upload FULL debug logs
+        uses: actions/upload-artifact@v4
+        with:
+          name: Full-Debug-Logs
+          path: |
+            full_debug.log
+      - name: Upload ANY APK found
+        uses: actions/upload-artifact@v4
+        with:
+          name: Possible-APK
+          path: "**/*.apk"
+          if-no-files-found: warn
