@@ -1,3 +1,4 @@
+// ✅ ПРАВИЛЬНЫЙ КОРНЕВОЙ build.gradle
 buildscript {
     repositories {
         google()
@@ -7,44 +8,14 @@ buildscript {
         classpath 'com.android.tools.build:gradle:7.0.3'
     }
 }
-plugins {
-    id 'com.android.application'
-}
 
-android {
-    compileSdkVersion 33
-    buildToolsVersion "33.0.0"
-
-    defaultConfig {
-        applicationId "org.kotuktoper.ios26"
-        minSdkVersion 21
-        targetSdkVersion 33
-        versionCode 26001
-        versionName "iOS26.1.0"
-        
-        // 🎨 Российские цвета
-        resValue "color", "rus_red_bright", "#D52B1E"
-        resValue "color", "rus_blue_bright", "#0039A6"
-    }
-
-    buildTypes {
-        debug {
-            debuggable true
-            minifyEnabled false
-            signingConfig signingConfigs.debug
-        }
-        release {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-        }
-    }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
     }
 }
 
-dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-}here й
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
