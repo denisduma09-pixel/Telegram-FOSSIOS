@@ -1,4 +1,4 @@
-name: 🚀 BUILD APK
+name: 🚀 BUILD WITH COLORS
 on: workflow_dispatch
 jobs:
   build:
@@ -10,9 +10,24 @@ jobs:
         with:
           java-version: '11'
           distribution: 'temurin'
+      - name: Add Russian Colors
+        run: |
+          mkdir -p TMessagesProj/src/main/res/values
+          cat > TMessagesProj/src/main/res/values/colors.xml << 'EOF'
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="rus_red_bright">#D52B1E</color>
+    <color name="rus_red_deep">#CC0000</color>
+    <color name="rus_blue_bright">#0039A6</color>
+    <color name="rus_blue_deep">#00247D</color>
+    <color name="theme_primary">@color/rus_red_bright</color>
+    <color name="theme_accent">@color/rus_blue_bright</color>
+</resources>
+EOF
       - name: Build
         run: chmod +x gradlew && ./gradlew assembleDebug
       - uses: actions/upload-artifact@v4
         with:
-          name: KotuktoperGram
-          path: "**/*.apk" 
+          name: KotuktoperGram-RU
+          path: "**/*.apk"
+          
